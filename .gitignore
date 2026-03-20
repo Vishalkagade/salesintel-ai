@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Data (generated, don't commit large files)
+data/raw/*.csv
+data/docs/sales_documents.json
+data/docs/account_summary/
+data/docs/meeting_notes/
+data/docs/product_sheet/
+data/docs/sales_playbook/
+data/processed/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Environment
+.env
+.env.local
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# ChromaDB
+chroma_db/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
