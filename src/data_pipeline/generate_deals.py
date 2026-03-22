@@ -250,37 +250,37 @@ def generate_deals(num_deals: int = NUM_DEALS, seed: int = 42) -> pd.DataFrame:
 
         # Factor 1: More activities → higher win chance
         # WHY? Engaged prospects buy. This is the #1 predictor in real CRM analytics.
-        activity_score = np.clip(total_activities[i] / 25.0, 0, 1) * 0.3
+        activity_score = np.clip(total_activities[i] / 25.0, 0, 1) * 0.8
         score += activity_score
 
         # Factor 2: Deal amount (larger = harder to close)
         # WHY? Bigger deals have more decision-makers, longer approval chains.
-        amount_penalty = -0.15 * amount_normalized[i]
+        amount_penalty = -0.5 * amount_normalized[i]
         score += amount_penalty
 
         # Factor 3: Days in pipeline (too long = deal is dying)
         # WHY? "Time kills all deals" — real sales wisdom.
         if days_in_pipeline[i] > 120:
-            score -= 0.2
+            score -= 0.6
         elif days_in_pipeline[i] > 90:
-            score -= 0.1
+            score -= 0.3
 
         # Factor 4: Lead source quality
-        score += lead_source_boost[lead_sources[i]]
+        score += lead_source_boost[lead_sources[i]] * 3
 
         # Factor 5: Industry
-        score += industry_boost[industries[i]]
+        score += industry_boost[industries[i]] * 3
 
         # Factor 6: Competitor makes it harder
         if competitor_involved[i]:
-            score -= 0.15
+            score -= 0.5
 
         # Factor 7: More contacts can go either way
         # Many contacts = complex deal, but also = more buy-in
         if num_contacts[i] > 5:
-            score -= 0.05  # Too many cooks
+            score -= 0.15  # Too many cooks
         elif num_contacts[i] >= 3:
-            score += 0.05  # Good multi-threading
+            score += 0.15  # Good multi-threading
 
         win_scores[i] = score
 
@@ -288,6 +288,7 @@ def generate_deals(num_deals: int = NUM_DEALS, seed: int = 42) -> pd.DataFrame:
     # WHY sigmoid? It maps any score to a 0-1 probability range.
     # This is the same function used in logistic regression.
     # Base rate of ~45% win rate (realistic for B2B sales).
+    # We scale scores so probabilities spread from ~10% to ~90% (not a narrow band).
     win_probabilities = 1 / (1 + np.exp(-(win_scores + 0.0)))
 
     # Determine actual outcomes based on probabilities
